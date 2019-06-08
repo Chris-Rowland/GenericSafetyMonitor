@@ -29,6 +29,7 @@ using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace ASCOM.GenericSafety
 {
@@ -259,9 +260,9 @@ namespace ASCOM.GenericSafety
                 {
                     if (usePowerStatus)
                     {
-                        var ps = System.Windows.Forms.SystemInformation.PowerStatus;
+                        var ps = SystemInformation.PowerStatus;
                         LogMessage("IsSafe", "PowerLineStatus {0}", ps.PowerLineStatus);
-                        if (ps.PowerLineStatus == System.Windows.Forms.PowerLineStatus.Offline)
+                        if (ps.PowerLineStatus == PowerLineStatus.Offline)
                             return false;
                     }
 
