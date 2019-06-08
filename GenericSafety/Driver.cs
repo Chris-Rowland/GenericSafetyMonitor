@@ -261,9 +261,18 @@ namespace ASCOM.GenericSafety
                     if (usePowerStatus)
                     {
                         var ps = SystemInformation.PowerStatus;
-                        LogMessage("IsSafe", "PowerLineStatus {0}", ps.PowerLineStatus);
+                        LogMessage("IsSafe", "PowerLineStatus {0}, batteryChargeStatus {1}, BatteryFullLifetime {2},  BatteryLifePercent {3}, BatteryLifeRemaining {4}",
+                            ps.PowerLineStatus, ps.BatteryChargeStatus, ps.BatteryFullLifetime, ps.BatteryLifePercent, ps.BatteryLifeRemaining);
+                        // make a series of decisions depending on the Power Status
                         if (ps.PowerLineStatus == PowerLineStatus.Offline)
-                            return false;
+                            return false;       // not running on AC power
+                        // these ignore the charging status, when charging they will return false until there is sufficient charge.
+                        if (ps.BatteryChargeStatus.HasFlag(BatteryChargeStatus.Critical) || ps.BatteryChargeStatus.HasFlag(BatteryChargeStatus.Low))
+                            return false;       // low or critical battery status
+                        if (ps.BatteryLifePercent < 0.8f)
+                            return false;       // battery life percent lett than 80%
+                        if (ps.BatteryLifeRemaining < 600)
+                            return false;       // less than 10 minutes
                     }
 
                     if (string.IsNullOrWhiteSpace(DataFile))
